@@ -30,12 +30,14 @@ def extract_video_info(url):
                 ).execute()
             snipeetInfo = videos_response["items"][0]["snippet"]
             staticsInfo = videos_response["items"][0]["statistics"]
+            videoid = match.group(1)
             title = snipeetInfo['title']
             image = snipeetInfo['thumbnails']['default']['url']
             channeltitle = snipeetInfo['channelTitle']
             viwecount = staticsInfo['viewCount']
             publishedAt = snipeetInfo['publishedAt']
             link = f"https://www.youtube.com/watch?v={match.group(1)}"
+            print(f"動画ID: {videoid}")
             print(f"再生回数: {viwecount}")
             print(f"タイトル: {title}")
             print(f"チャンネル名: {channeltitle}")
@@ -43,7 +45,7 @@ def extract_video_info(url):
             print(f"公開日: {publishedAt}")
             print(f"リンク: {link}")
             
-            cur.execute('INSERT INTO videos values(?,?,?,?,?,?)',(title,channeltitle,image,link,viwecount,publishedAt))
+            cur.execute('INSERT INTO videos values(?,?,?,?,?,?,?)',(videoid,title,channeltitle,image,link,viwecount,publishedAt))
             conn.commit()
             return
     return print('URLが正しくないかも')
