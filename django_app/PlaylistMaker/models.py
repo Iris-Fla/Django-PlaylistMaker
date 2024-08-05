@@ -9,7 +9,7 @@ class video_info(models.Model):
   # birthday = models.DateField()
   title = models.CharField(max_length=100) #titleとchannelは文字列なのでCharFieldを使った
   channel = models.CharField(max_length=100)
-  image = models.ImageField(width_field="image_width") #ImageFieldの使い方がこれであってるか分からん　一応画像の保存に使うっぽい
+  image = models.ImageField(width_field=image_width) #ImageFieldの使い方がこれであってるか分からん　一応画像の保存に使うっぽい
   url = models.URLField() #URlのみを保存するフィールド
   views = models.PositiveBigIntegerField() #再生回数は正の数かつ最も再生されている動画が100億ぐらいなのでこのフィールド
   published_date = models.DateTimeField(null=True, blank=True) #Datetimeを保存するやつ　これであってるか分からん
