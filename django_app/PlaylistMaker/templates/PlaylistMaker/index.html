@@ -1,37 +1,64 @@
 {% load static %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf=8">
-  <title>{{title}}</title>
-  <!--css-->
-  <link href="http://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.css"
-  rel="stylesheet" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youtube Playlist Maker</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
-<body class="container">
-  <h1 class="display-4 text-primary">{{title}}</h1>
-  <p class="h5 mt-4">{{message|safe}}</p>
-  <table class="table">
-    <tr>
-      <th>ID</th>
-      <th>title</th>
-      <th>channel</th>
-      <th>image</th>
-      <th>url</th>
-      <th>views</th>
-      <th>datetime</th>
-    </tr>
-    {% for item in data %}
-    <tr>
-      <td>{{item.id}}</td>
-      <td>{{item.title}}</td>
-      <td>{{item.channel}}</td>
-      <td>{{item.image}}</td>
-      <td>{{item.url}}</td>
-      <td>{{item.views}}</td>
-      <td>{{item.published_date}}</td>
-    </tr>
-    {% endfor %}
-  </table>
+<body>
+    <div class="container-fluid">
+        <header class="bg-danger text-white p-3">
+            <h1 class="mb-0">Youtube Playlist Maker</h1>
+        </header>
+        <main class="row mt-3">
+            <section class="col-md-9">
+                <h2>動画一覧</h2>
+                <button id="add-all" class="btn btn-primary mb-3">一覧に追加ボタン</button>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for video in videos %}
+                    <div class="col">
+                        <div class="card h-100">
+                            <img src="{{ video.image }}" class="card-img-top" alt="サムネイル">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ video.title }}</h5>
+                                <p class="card-text">投稿者: {{ video.channel }} | 視聴回数: {{ video.views }}</p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="selected_videos" value="{{ video.id }}" id="video{{ video.id }}">
+                                    <label class="form-check-label" for="video{{ video.id }}">
+                                        選択する
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            <aside class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="mb-0">絞り込み</h2>
+                    </div>
+                    <div class="card-body">
+                        <!-- Add filter options here -->
+                    </div>
+                    <div class="card-footer">
+                        <button id="create-playlist" class="btn btn-success w-100">作成</button>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>
