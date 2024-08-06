@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YouTube Video Info</title>
+</head>
+<body>
+    <h1>YouTube Video Info Extractor</h1>
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="url" placeholder="Enter YouTube URL">
+        <button type="submit">Extract Info</button>
+    </form>
+
+    {% if error %}
+        <p>{{ error }}</p>
+    {% elif video %}
+        <h2>{{ video.title }}</h2>
+        <img src="{{ video.image }}" alt="Thumbnail">
+        <p>Channel: {{ video.channel }}</p>
+        <p>Views: {{ video.views }}</p>
+        <p>Published: {{ video.published_date }}</p>
+        <p><a href="{{ video.url }}" target="_blank">Watch on YouTube</a></p>
+        {% if created %}
+            <p>New video information saved to database.</p>
+        {% else %}
+            <p>Existing video information updated in database.</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
