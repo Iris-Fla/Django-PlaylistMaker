@@ -32,7 +32,7 @@ def extract_video_info(url):
             staticsInfo = videos_response["items"][0]["statistics"]
             videoid = match.group(1)
             title = snipeetInfo['title']
-            image = snipeetInfo['thumbnails']['default']['url']
+            image = snipeetInfo['thumbnails']['high']['url']
             channeltitle = snipeetInfo['channelTitle']
             viwecount = staticsInfo['viewCount']
             publishedAt = snipeetInfo['publishedAt']
