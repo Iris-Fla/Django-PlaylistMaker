@@ -20,6 +20,7 @@ class video_info(models.Model):
   url = models.URLField() #URlのみを保存するフィールド
   views = models.PositiveBigIntegerField() #再生回数は正の数かつ最も再生されている動画が100億ぐらいなのでこのフィールド
   published_date = models.DateTimeField(null=True, blank=True) #Datetimeを保存するやつ　これであってるか分からん
+  is_selected = models.BooleanField(default=False)
 
 
   def __str__(self):

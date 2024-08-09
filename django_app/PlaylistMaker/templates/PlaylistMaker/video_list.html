@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>動画リスト</title>
+</head>
+<body>
+    <h1>動画リスト</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% for video in videos %}
+            <input type="checkbox" name="video_{{ video.id }}" id="video_{{ video.id }}"
+                   {% if video.is_selected %}checked{% endif %}>
+            <label for="video_{{ video.id }}">{{ video.title }}</label><br>
+        {% endfor %}
+        <input type="submit" value="選択したビデオを表示">
+    </form>
+</body>
+</html>

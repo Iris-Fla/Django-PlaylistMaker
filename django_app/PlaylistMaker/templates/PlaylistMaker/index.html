@@ -18,7 +18,10 @@
             <section class="col-md-9">
                 <h2>動画一覧</h2>
                 <button id="add-all" class="btn btn-primary mb-3">一覧に追加ボタン</button>
+                <form method="post">
                 <div class="row row-cols-1 row-cols-md-3 g-4">
+                    
+                    {% csrf_token %}
                     {% for video in videos %}
                     <div class="col">
                         <div class="card h-100">
@@ -29,7 +32,7 @@
                             </div>
                             <div class="card-footer">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="selected_videos" value="{{ video.id }}" id="video{{ video.id }}">
+                                    <input class="form-check-input" type="checkbox" name="video_{{ video.id }}" id="video_{{ video.id }}">
                                     <label class="form-check-label" for="video{{ video.id }}">
                                         選択する
                                     </label>
@@ -38,7 +41,9 @@
                         </div>
                     </div>
                     {% endfor %}
+                    <input type="submit" value="選択された動画">
                 </div>
+                </form>
             </section>
             <aside class="col-md-3">
                 <div class="card">

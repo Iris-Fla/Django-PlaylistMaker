@@ -1,19 +1,29 @@
 import re
 from googleapiclient.discovery import build
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.conf import settings
 from .models import video_info
 from django.utils.dateparse import parse_datetime
+from .forms import VideoSelectionForm
 
 # Create your views here.
 
 def index(request):
-  data = video_info.objects.all()
-  params = {
-    'videos': data,
-  }
+  videos = video_info.objects.all()
+  if request.method == 'POST':
+        form = VideoSelectionForm(request.POST)
+        if form.is_valid():
+            for video in videos:
+                video.is_selected = request.POST.get(f'video_{video.id}', False) == 'on'
+                video.save()
+            return redirect('selected_videos')
+        return render(request, 'PlaylistMaker/selected_videos.html', {'videos': selected_videos})
 
-  return render(request, 'PlaylistMaker/index.html',params)
+#   params = {
+#     'videos': videos,
+#   }
+
+  return render(request, 'PlaylistMaker/index.html', {'videos': videos})
 
 def create(request):
     if request.method == 'POST':
@@ -65,3 +75,18 @@ def create(request):
     
     # If GET request
     return render(request, 'PlaylistMaker/create.html')
+
+def video_list(request):
+    videos = video_info.objects.all()
+    if request.method == 'POST':
+        form = VideoSelectionForm(request.POST)
+        if form.is_valid():
+            for video in videos:
+                video.is_selected = request.POST.get(f'video_{video.id}', False) == 'on'
+                video.save()
+            return redirect('selected_videos')
+    return render(request, 'PlaylistMaker/video_list.html', {'videos': videos})
+
+def selected_videos(request):
+    selected_videos = video_info.objects.filter(is_selected=True)
+    return render(request, 'PlaylistMaker/selected_videos.html', {'videos': selected_videos})
