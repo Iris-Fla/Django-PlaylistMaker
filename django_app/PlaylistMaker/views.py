@@ -18,11 +18,6 @@ def index(request):
                 video.save()
             return redirect('selected_videos')
         return render(request, 'PlaylistMaker/selected_videos.html', {'videos': selected_videos})
-
-#   params = {
-#     'videos': videos,
-#   }
-
   return render(request, 'PlaylistMaker/index.html', {'videos': videos})
 
 def create(request):

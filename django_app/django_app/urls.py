@@ -20,5 +20,5 @@ import PlaylistMaker.views as PlaylistMaker
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('PlaylistMaker/', include('PlaylistMaker.urls')),
+    path('', include('PlaylistMaker.urls')),
 ]
