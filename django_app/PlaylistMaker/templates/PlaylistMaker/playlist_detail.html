@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Playlist Detail</title>
+</head>
+<body>
+    <h1>Playlist Detail</h1>
+    <ul>
+        {% for video in videos %}
+            <li>{{ video.title }} - {{ video.description }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'index' %}">Back to Index</a>
+</body>
+</html>

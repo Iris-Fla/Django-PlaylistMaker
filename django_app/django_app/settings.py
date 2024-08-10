@@ -27,6 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-9612z-w)fhjae5$3xb23=9-$)a8*b5^_%d))nf!a$+&fwti6@c'
 YOUTUBE_API_KEY = os.environ['YoutubeAPIKey']
 
+CLIENT_SECRETS_FILE = BASE_DIR / 'client_secret.json'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
