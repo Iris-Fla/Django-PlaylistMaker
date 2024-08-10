@@ -1,7 +1,34 @@
-<h1>選択されたビデオ</h1>
-{% for video in videos %}
-    <img src="{{ video.image }}" class="card-img-top" alt="サムネイル">
-    <div class="card-body">
-    <h5 class="card-title">{{ video.title }}</h5>
-    <p class="card-text">投稿者: {{ video.channel }} | 視聴回数: {{ video.views }}</p>
-{% endfor %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youtube Playlist Maker</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container-fluid">
+        <header class="bg-danger text-white p-3">
+            <h1 class="mb-0">Youtube Playlist Maker</h1>
+        </header>
+        <main class="row mt-3">
+            <section class="col-md-9">
+                <h1>選択されたビデオ</h1>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for video in videos %}
+                    <div class="col">
+                        <div class="card h-100">
+                            <img src="{{ video.image }}" class="card-img-top" alt="サムネイル">
+                            <div class="card-body">
+                            <h5 class="card-title">{{ video.title }}</h5>
+                            <p class="card-text">投稿者: {{ video.channel }} | 視聴回数: {{ video.views }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+</body>
+</html>
