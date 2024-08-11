@@ -8,6 +8,7 @@ from django.utils.dateparse import parse_datetime
 from .forms import VideoSelectionForm
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
+from .forms import SearchForm 
 # Create your views here.
 
 SCOPES = ["https://www.googleapis.com/auth/youtube.force-ssl"]
@@ -15,7 +16,16 @@ API_SERVICE_NAME = "youtube"
 API_VERSION = "v3"
 
 def index(request):
-  videos = video_info.objects.all()
+#   videos = video_info.objects.all()
+  searchForm = SearchForm(request.GET)
+
+  if searchForm.is_valid():
+        keyword = searchForm.cleaned_data['keyword'] # keyword変数にフォームのキーワードを代入
+        videos = video_info.objects.filter(title__contains=keyword) 
+  else:
+        searchForm = SearchForm() # searchForm変数をSearchFormオブジェクトで上書き
+        videos = video_info.objects.all()
+
   if request.method == 'POST':
         form = VideoSelectionForm(request.POST)
         if form.is_valid():
@@ -24,7 +34,11 @@ def index(request):
                 video.save()
             return redirect('create_youtube_playlist')
         return render(request, 'PlaylistMaker/selected_videos.html', {'videos': selected_videos})
-  return render(request, 'PlaylistMaker/index.html', {'videos': videos})
+  context = {
+      'videos' : videos,
+      'searchForm': searchForm,
+  }
+  return render(request, 'PlaylistMaker/index.html', context)
 
 def get_authenticated_service():
     flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(settings.CLIENT_SECRETS_FILE, SCOPES)
