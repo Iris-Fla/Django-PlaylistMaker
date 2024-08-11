@@ -1,0 +1,107 @@
+.card {
+  font-size: 0.9rem; /* テキストサイズを小さくする */
+}
+
+.card-title {
+  font-size: 1rem; /* タイトルのサイズを小さくする */
+}
+
+.card-text {
+  font-size: 0.8rem; /* テキストのサイズをさらに小さくする */
+}
+
+.card-img-top {
+  height: 150px; /* 画像の高さを小さくする */
+  object-fit: cover; /* 画像のアスペクト比を維持する */
+}
+
+/* カスタムチェックボックスのスタイル */
+.form-check-input {
+  display: none; /* デフォルトのチェックボックスを非表示にする */
+}
+
+.form-check-label {
+  width: 100%;
+  height: 90%; /* ラベルの幅を指定 */
+  display: inline-block;
+  padding: 2rem 5rem;
+  border: 2px solid rgb(255, 121, 121); /* 赤色のボーダー */
+  border-radius: 0.25rem;
+  background-color: rgb(255, 121, 121); /* 赤色の背景 */
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+.form-check-input + .form-check-label::before {
+  content: "追加"; /* チェックされていないときに表示するテキスト */
+  position: absolute;
+  top: 87%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem; /* テキストサイズ */
+  color: #fff; /* テキストカラー */
+}
+
+.form-check-input:checked + .form-check-label::before {
+  content: ""; /* チェックされたときに "追加" を非表示にする */
+}
+
+.form-check-input:checked + .form-check-label {
+  background-color: #28a745; /* 緑色の背景 */
+  border-color: #28a745; /* 緑色のボーダー */
+}
+
+.form-check-input:checked + .form-check-label::after {
+  content: "追加済み"; /* チェックされたときに表示するテキスト */
+  position: absolute;
+  top: 87%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem; /* テキストサイズ */
+  color: #fff; /* テキストカラー */
+}
+
+.m-plus-rounded-1c-regular {
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+header h1 {
+  position: relative;
+  display: inline-block;
+}
+
+header h1::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 5px;
+  background-color: rgb(255, 121, 121);
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.sticky-sidebar {
+  position: sticky;
+  top: 20px; /* 上端からの距離を調整 */
+  height: calc(100vh - 40px); /* ビューポートの高さから上下のマージンを引いた高さ */
+  overflow-y: auto; /* 内容が長い場合にスクロール可能にする */
+}
+
+.btn-p {
+  background-color: rgb(148, 95, 245);
+  border-color:rgb(148, 95, 245) ;
+  color: #fff;
+}
+
+.btn-p:hover {
+  background-color: rgb(104, 43, 218); /* ホバー時の色 */
+  border-color:rgb(148, 95, 245) ;
+}

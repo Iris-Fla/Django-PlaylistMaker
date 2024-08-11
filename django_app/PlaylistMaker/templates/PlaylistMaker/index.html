@@ -1,26 +1,31 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Youtube Playlist Maker</title>
     <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <div class="container-fluid">
-        <header class="bg-danger text-white p-3">
-            <h1 class="mb-0">Youtube Playlist Maker</h1>
+        <header class="text-white p-3">
+            <h1 class="mb-0">Youtube Playlist Maker<i class="bi-music-note"></i></h1>
         </header>
+        <form method="post">
         <main class="row mt-3">
             <section class="col-md-9">
-                <h2>動画一覧</h2>
-                <button id="add-all" class="btn btn-primary mb-3">一覧に追加ボタン</button>
-                <form method="post">
-                <div class="row row-cols-1 row-cols-md-3 g-4">
-                    
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="mb-0">動画一覧</h2>
+                    <a href="{% url 'create' %}" id="add-all" class="btn btn-primary">動画の追加はこちらから</a>
+                </div>
+                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
                     {% csrf_token %}
                     {% for video in videos %}
                     <div class="col">
@@ -28,42 +33,38 @@
                             <img src="{{ video.image }}" class="card-img-top" alt="サムネイル">
                             <div class="card-body">
                                 <h5 class="card-title">{{ video.title }}</h5>
-                                <p class="card-text">投稿者: {{ video.channel }} | 視聴回数: {{ video.views }}</p>
+                                <p class="card-text">投稿者: {{ video.channel }}</p>
+                                <p class="card-text"><small class="text-body-secondary">投稿日: {{ video.published_date }}</small></p>
                             </div>
                             <div class="card-footer">
-                                <div class="form-check">
+                                <div class="form-check text-center p-0">
                                     <input class="form-check-input" type="checkbox" name="video_{{ video.id }}" id="video_{{ video.id }}">
-                                    <label class="form-check-label" for="video{{ video.id }}">
-                                        選択する
-                                    </label>
+                                    <label class="form-check-label" for="video_{{ video.id }}"></label>
                                 </div>
                             </div>
                         </div>
                     </div>
                     {% endfor %}
-                    <input type="submit" value="選択された動画">
                 </div>
-                </form>
             </section>
-            <aside class="col-md-3">
+            <aside class="col-md-3 sticky-sidebar">
                 <div class="card">
                     <div class="card-header">
-                        <h2 class="mb-0">絞り込み</h2>
+                        <h2 class="mb-0">絞り込み機能</h2>
                     </div>
                     <div class="card-body">
-                        <!-- Add filter options here -->
+                        工事中
                     </div>
                     <div class="card-footer">
-                        <button id="create-playlist" class="btn btn-success w-100">作成</button>
+                        <button id="create-playlist" class="btn btn-success w-100">絞り込む</button>
+                    </div>
+                    <div class="card-footer">
+                        <input type="submit" class="btn btn-success w-100 btn-p" value="選択した動画でプレイリスト作成♪"></input>
                     </div>
                 </div>
             </aside>
         </main>
+    </form>
     </div>
-
-    <!-- Bootstrap JS and Popper.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-    <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>
