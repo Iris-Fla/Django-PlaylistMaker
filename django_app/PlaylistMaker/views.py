@@ -83,51 +83,102 @@ def create(request):
         url = request.POST.get('url')
         youtube = build('youtube', 'v3', developerKey=settings.YOUTUBE_API_KEY)
         
+        # プレイリストIDを抽出するパターンを追加
         patterns = [
             r'(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)',
             r'(?:https?:\/\/)?(?:www\.)?youtu\.be\/([^?]+)',
-            r'(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([^?]+)'
+            r'(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([^?]+)',
+            r'(?:https?:\/\/)?(?:www\.)?youtube\.com\/playlist\?list=([^&]+)'
         ]
         
         for pattern in patterns:
             match = re.search(pattern, url)
             if match:
-                video_id = match.group(1)
-                videos_response = youtube.videos().list(
-                    part='snippet,statistics',
-                    id=video_id
-                ).execute()
+                if 'playlist' in pattern:
+                    # プレイリストの場合
+                    playlist_id = match.group(1)
+                    videos = get_playlist_videos(youtube, playlist_id)
+                else:
+                    # 単一の動画の場合
+                    video_id = match.group(1)
+                    videos = [get_video_info(youtube, video_id)]
                 
-                if videos_response['items']:
-                    item = videos_response['items'][0]
-                    snippet = item['snippet']
-                    statistics = item['statistics']
-                    
-                    # Create or update video_info object
-                    video, created = video_info.objects.update_or_create(
-                        videoid=video_id,
-                        defaults={
-                            'title': snippet['title'],
-                            'channel': snippet['channelTitle'],
-                            'image': snippet['thumbnails']['high']['url'],
-                            'url': f"https://www.youtube.com/watch?v={video_id}",
-                            'views': int(statistics['viewCount']),
-                            'published_date': parse_datetime(snippet['publishedAt'])
-                        }
-                    )
-                    
-                    context = {
-                        'video': video,
-                        'created': created
-                    }
-                    return render(request, 'PlaylistMaker/create.html', context)
+                created_videos = []
+                for video in videos:
+                    if video:
+                        video_obj, created = video_info.objects.update_or_create(
+                            videoid=video['id'],
+                            defaults={
+                                'title': video['title'],
+                                'channel': video['channel'],
+                                'image': video['image'],
+                                'url': f"https://www.youtube.com/watch?v={video['id']}",
+                                'views': video['views'],
+                                'published_date': video['published_date']
+                            }
+                        )
+                        created_videos.append((video_obj, created))
+                
+                context = {
+                    'videos': created_videos
+                }
+                return render(request, 'PlaylistMaker/create.html', context)
         
-        # If no match found
+        # マッチしない場合
         context = {'error': 'Invalid YouTube URL'}
         return render(request, 'PlaylistMaker/create.html', context)
     
-    # If GET request
+    # GETリクエストの場合
     return render(request, 'PlaylistMaker/create.html')
+
+def get_playlist_videos(youtube, playlist_id):
+    videos = []
+    next_page_token = None
+    
+    while True:
+        playlist_response = youtube.playlistItems().list(
+            part='snippet',
+            playlistId=playlist_id,
+            maxResults=50,
+            pageToken=next_page_token
+        ).execute()
+        
+        for item in playlist_response['items']:
+            video_id = item['snippet']['resourceId']['videoId']
+            video = get_video_info(youtube, video_id)
+            if video:
+                videos.append(video)
+        
+        next_page_token = playlist_response.get('nextPageToken')
+        if not next_page_token:
+            break
+    
+    return videos
+
+def get_video_info(youtube, video_id):
+    try:
+        video_response = youtube.videos().list(
+            part='snippet,statistics',
+            id=video_id
+        ).execute()
+        
+        if video_response['items']:
+            item = video_response['items'][0]
+            snippet = item['snippet']
+            statistics = item['statistics']
+            
+            return {
+                'id': video_id,
+                'title': snippet['title'],
+                'channel': snippet['channelTitle'],
+                'image': snippet['thumbnails']['high']['url'],
+                'views': int(statistics['viewCount']),
+                'published_date': parse_datetime(snippet['publishedAt'])
+            }
+    except Exception as e:
+        print(f"Error fetching video info for {video_id}: {str(e)}")
+    
+    return None
 
 def video_list(request):
     videos = video_info.objects.all()
