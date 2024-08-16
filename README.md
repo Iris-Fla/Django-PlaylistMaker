@@ -1,4 +1,4 @@
-![home](https://github.com/user-attachments/assets/05b0605a-f964-4454-ad1d-b909d132f9b7)
+![top](https://github.com/user-attachments/assets/05b0605a-f964-4454-ad1d-b909d132f9b7)
 
 # Django-PlaylistMaker
  Youtubeのプレイリストを作ります。
