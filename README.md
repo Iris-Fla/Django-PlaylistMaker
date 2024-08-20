@@ -10,11 +10,13 @@
 ## OAuth2.0クライアントIDの取得も必要です。
 OAuthクライアントのJSONを「client_secret.json」で保存し、django_app(db.sqlite3)と同ディレクトリに配置してください。
 
+
+## アプリ起動
 ```
 python -m venv venv
 venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-python manage.py makemigrations PlaylistMaker
-python manage.py createsuperuser
+cd .\django_app\
+python manage.py migrate
 python manage.py runserver  
 ```
