@@ -18,15 +18,11 @@
         <header class="text-white p-3">
             <h1 class="mb-0">Youtube Playlist Maker<i class="bi-music-note"></i></h1>
         </header>
-        {% if searchForm %}<!-- searchFormがあれば -->
-        <form action='{% url "index" %}' method="get"><!-- getメソッドでインデックス関数を呼び出す -->
-          <div>
-            {{ searchForm }}<!-- views.pyから受け取ったsearchFormを表示 -->
-            <input type="submit" value="検索">
-            <a href='{% url "index" %}'>クリア</a><!-- postメソッドでインデックス関数を呼び出す -->
-          </div>
+        <form method="get">
+            {{ searchForm.as_p }}
+            {{ filterForm.as_p }}
+            <button type="submit">検索・絞り込み</button>
         </form>
-      {% endif %}
         <form method="post">
         <main class="row mt-3">
             <section class="col-md-9">

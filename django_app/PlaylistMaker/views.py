@@ -8,7 +8,7 @@ from django.utils.dateparse import parse_datetime
 from .forms import VideoSelectionForm
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
-from .forms import SearchForm 
+from .forms import SearchForm,FilterForm
 # Create your views here.
 
 SCOPES = ["https://www.googleapis.com/auth/youtube.force-ssl"]
@@ -16,29 +16,51 @@ API_SERVICE_NAME = "youtube"
 API_VERSION = "v3"
 
 def index(request):
-#   videos = video_info.objects.all()
-  searchForm = SearchForm(request.GET)
+    videos = video_info.objects.all()
+    searchForm = SearchForm(request.GET)
+    filterForm = FilterForm(request.GET)
 
-  if searchForm.is_valid():
-        keyword = searchForm.cleaned_data['keyword'] # keyword変数にフォームのキーワードを代入
-        videos = video_info.objects.filter(title__contains=keyword) 
-  else:
-        searchForm = SearchForm() # searchForm変数をSearchFormオブジェクトで上書き
-        videos = video_info.objects.all()
+    if searchForm.is_valid():
+        keyword = searchForm.cleaned_data['keyword']
+        videos = videos.filter(title__contains=keyword)
 
-  if request.method == 'POST':
+    if filterForm.is_valid():
+        order_by = filterForm.cleaned_data['order_by']
+        direction = filterForm.cleaned_data['direction']
+        min_views = filterForm.cleaned_data['min_views']
+        max_views = filterForm.cleaned_data['max_views']
+        start_date = filterForm.cleaned_data['start_date']
+        end_date = filterForm.cleaned_data['end_date']
+
+        if order_by:
+            if direction == 'desc':
+                order_by = f'-{order_by}'
+            videos = videos.order_by(order_by)
+
+        if min_views is not None:
+            videos = videos.filter(view_count__gte=min_views)
+        if max_views is not None:
+            videos = videos.filter(view_count__lte=max_views)
+        if start_date:
+            videos = videos.filter(upload_date__gte=start_date)
+        if end_date:
+            videos = videos.filter(upload_date__lte=end_date)
+
+    if request.method == 'POST':
         form = VideoSelectionForm(request.POST)
         if form.is_valid():
             for video in videos:
                 video.is_selected = request.POST.get(f'video_{video.id}', False) == 'on'
                 video.save()
             return redirect('create_youtube_playlist')
-        return render(request, 'PlaylistMaker/selected_videos.html', {'videos': selected_videos})
-  context = {
-      'videos' : videos,
-      'searchForm': searchForm,
-  }
-  return render(request, 'PlaylistMaker/index.html', context)
+        return render(request, 'PlaylistMaker/selected_videos.html', {'videos': videos.filter(is_selected=True)})
+
+    context = {
+        'videos': videos,
+        'searchForm': searchForm,
+        'filterForm': filterForm,
+    }
+    return render(request, 'PlaylistMaker/index.html', context)
 
 def get_authenticated_service():
     flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(settings.CLIENT_SECRETS_FILE, SCOPES)
