@@ -19,6 +19,7 @@ def index(request):
     videos = video_info.objects.all()
     searchForm = SearchForm(request.GET)
     filterForm = FilterForm(request.GET)
+    form = VideoSelectionForm(request.POST)
 
     if searchForm.is_valid():
         keyword = searchForm.cleaned_data['keyword']
@@ -38,16 +39,15 @@ def index(request):
             videos = videos.order_by(order_by)
 
         if min_views is not None:
-            videos = videos.filter(view_count__gte=min_views)
+            videos = videos.filter(views__gte=min_views)
         if max_views is not None:
-            videos = videos.filter(view_count__lte=max_views)
+            videos = videos.filter(views__lte=max_views)
         if start_date:
-            videos = videos.filter(upload_date__gte=start_date)
+            videos = videos.filter(published_date__gte=start_date)
         if end_date:
-            videos = videos.filter(upload_date__lte=end_date)
+            videos = videos.filter(published_date__lte=end_date)
 
     if request.method == 'POST':
-        form = VideoSelectionForm(request.POST)
         if form.is_valid():
             for video in videos:
                 video.is_selected = request.POST.get(f'video_{video.id}', False) == 'on'

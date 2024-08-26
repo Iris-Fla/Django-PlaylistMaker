@@ -18,28 +18,22 @@
         <header class="text-white p-3">
             <h1 class="mb-0">Youtube Playlist Maker<i class="bi-music-note"></i></h1>
         </header>
-        <form method="get">
-            {{ searchForm.as_p }}
-            {{ filterForm.as_p }}
-            <button type="submit">検索・絞り込み</button>
-        </form>
-        <form method="post">
         <main class="row mt-3">
             <section class="col-md-9">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="mb-0">動画一覧</h2>
                     <a href="{% url 'create' %}" id="add-all" class="btn btn-primary">動画の追加はこちらから</a>
                 </div>
-                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
-                    {% csrf_token %}
+                <div id="video-list" class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
                     {% for video in videos %}
-                    <div class="col">
+                    <div class="col video-item" data-title="{{ video.title|lower }}" data-channel="{{ video.channel|lower }}" data-date="{{ video.published_date|date:'Y-m-d' }}" data-views="{{ video.views }}">
                         <div class="card h-100">
                             <img src="{{ video.image }}" class="card-img-top" alt="サムネイル">
                             <div class="card-body">
                                 <h5 class="card-title">{{ video.title }}</h5>
                                 <p class="card-text">投稿者: {{ video.channel }}</p>
                                 <p class="card-text"><small class="text-body-secondary">投稿日: {{ video.published_date }}</small></p>
+                                <p class="card-text"><small class="text-body-secondary">再生回数: {{ video.views }}</small></p>
                             </div>
                             <div class="card-footer">
                                 <div class="form-check text-center p-0">
@@ -58,18 +52,102 @@
                         <h2 class="mb-0">絞り込み機能</h2>
                     </div>
                     <div class="card-body">
-                        工事中
-                    </div>
-                    <div class="card-footer">
-                        <button id="create-playlist" class="btn btn-success w-100">絞り込む</button>
-                    </div>
-                    <div class="card-footer">
-                        <input type="submit" class="btn btn-success w-100 btn-p" value="選択した動画でプレイリスト作成♪"></input>
+                        <form id="filter-form">
+                            {{ searchForm.as_p }}
+                            {{ filterForm.as_p }}
+                            <button type="button" id="filter-button" class="btn btn-primary w-100 mb-3">絞り込む</button>
+                        </form>
+                        <form method="post" id="create-playlist-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success w-100">選択した動画でプレイリスト作成♪</button>
+                        </form>
                     </div>
                 </div>
             </aside>
         </main>
-    </form>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterForm = document.getElementById('filter-form');
+            const filterButton = document.getElementById('filter-button');
+            const videoItems = document.querySelectorAll('.video-item');
+
+            filterButton.addEventListener('click', function() {
+                const keyword = document.getElementById('id_keyword').value.toLowerCase();
+                const orderBy = document.getElementById('id_order_by').value;
+                const direction = document.getElementById('id_direction').value;
+                const minViews = document.getElementById('id_min_views').value;
+                const maxViews = document.getElementById('id_max_views').value;
+                const startDate = document.getElementById('id_start_date').value;
+                const endDate = document.getElementById('id_end_date').value;
+
+                videoItems.forEach(function(item) {
+                    const title = item.dataset.title;
+                    const channel = item.dataset.channel;
+                    const date = item.dataset.published_date;
+                    const views = parseInt(item.dataset.views);
+
+                    let isVisible = true;
+
+                    // キーワードでフィルタリング
+                    if (keyword && !title.includes(keyword) && !channel.includes(keyword)) {
+                        isVisible = false;
+                    }
+
+                    // 再生回数でフィルタリング
+                    if (minViews && views < parseInt(minViews)) {
+                        isVisible = false;
+                    }
+                    if (maxViews && views > parseInt(maxViews)) {
+                        isVisible = false;
+                    }
+
+                    // 日付でフィルタリング
+                    if (startDate && date < startDate) {
+                        isVisible = false;
+                    }
+                    if (endDate && date > endDate) {
+                        isVisible = false;
+                    }
+
+                    item.style.display = isVisible ? '' : 'none';
+                });
+
+                // ソート
+                const sortedItems = Array.from(videoItems).sort((a, b) => {
+                    let aValue, bValue;
+                    if (orderBy === 'published_date') {
+                        aValue = a.dataset.date;
+                        bValue = b.dataset.date;
+                    } else if (orderBy === 'views') {
+                        aValue = parseInt(a.dataset.views);
+                        bValue = parseInt(b.dataset.views);
+                    }
+                    return direction === 'asc' ? aValue - bValue : bValue - aValue;
+                });
+
+                const videoList = document.getElementById('video-list');
+                sortedItems.forEach(item => videoList.appendChild(item));
+            });
+
+            document.getElementById('create-playlist-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                var selectedVideos = document.querySelectorAll('#video-list input[type="checkbox"]:checked');
+                var formData = new FormData(this);
+                selectedVideos.forEach(function(checkbox) {
+                    formData.append(checkbox.name, checkbox.value);
+                });
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = '{% url "create_youtube_playlist" %}';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

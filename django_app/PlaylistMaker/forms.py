@@ -12,7 +12,7 @@ class VideoSelectionForm(forms.ModelForm):
     
 
 class SearchForm(forms.Form):
-        keyword = forms.CharField(label='', max_length=50)
+        keyword = forms.CharField(label='', max_length=50,required=False)
 
 class FilterForm(forms.Form):
     ORDER_CHOICES = [
