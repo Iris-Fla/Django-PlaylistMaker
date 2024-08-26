@@ -11,6 +11,8 @@
 ## OAuth2.0クライアントIDの取得も必要です。
 OAuthクライアントのJSONを「client_secret.json」で保存し、django_app(db.sqlite3)と同ディレクトリに配置してください。
 
+![image](https://github.com/user-attachments/assets/95a2bad9-b290-4b27-941c-fca0bd67a95a)
+
 ### 機能追加要素
 - SQLiteを用いた絞り込み機能!
 - より簡単なアプリケーション立ち上げ
