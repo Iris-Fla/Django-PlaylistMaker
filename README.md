@@ -1,6 +1,6 @@
 ![top](https://github.com/user-attachments/assets/05b0605a-f964-4454-ad1d-b909d132f9b7)
 
-## 【技育CAMP2024】ハッカソン Vol.12で提出作品
+## 【技育CAMP2024】ハッカソン Vol.12提出作品
 <p>
 <img src="https://img.shields.io/badge/-Python3.12-D5D779.svg?logo=python&style=flat-square">
 <img src="https://img.shields.io/badge/-Django-092E20.svg?logo=django&style=flat-square">
